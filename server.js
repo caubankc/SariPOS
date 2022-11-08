@@ -4,9 +4,18 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const { apple } = require('color');
+const productRouter = require('./routes/productRoutes.js');
 
-require('colors');
+// require('colors');
+
+dotenv.config();
+
+// Connect with Mongo DB
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+    console.log("Connected to MongoDB");
+}).catch((err) => {
+    console.log(err.message);
+});
 
 const app = express();
 
@@ -17,5 +26,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
 // routes
+app.use("/api/products/:id?", (req, res) => {
+    req.id = req.params.id;
+    productRouter(req, res);
+});
 
+// create port
+const PORT = process.env.PORT || 5000;
+const HOSTNAME = process.env.HOSTNAME || "localhost";
+
+// listen
+app.listen(PORT, HOSTNAME, () => {
+    console.log(`Server running at http://${HOSTNAME}:${PORT}`)
+});
 
