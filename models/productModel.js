@@ -13,6 +13,10 @@ const productSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    status: {
+        type: String,
+        default: 'inactive'
+    },
     image: {
         type: String,
         required: true

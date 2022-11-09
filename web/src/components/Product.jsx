@@ -4,7 +4,7 @@ import { Card } from 'antd';
 const Product = ({product}) => {
     const { Meta } = Card;
     return (
-        <Card
+        <Card  
             hoverable
             style={{ width: 240, marginBottom: 30 }}
             cover={<img alt={product.name} src={product.image} style={{height: 200}}/>}
