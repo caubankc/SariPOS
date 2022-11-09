@@ -1,16 +1,19 @@
-const Product = require('../models/productModel.js');
+const Product = require('../models/productModel');
 
-const list = async (req, res) => {
- 
+const fetch = async (req, res) => {
+
     try {
-        var result;
-        if (req.id) {
-            result = await Product.findById(req.id);
-        } else {
-            result = await Product.find();
+        let result = [];
+        if (req.key == null) {
+            result = await Product.find()
+        } else if (req.key == 'id') {
+            result = await Product.findById(req.value);
+        } else if (req.key) {
+            result = await Product.find()
+                .where(req.mode).equals(req.value);
         }
         res.status(200).send(result)
-    } catch(error) {
+    } catch (error) {
         res.status(500);
         res.end("Fatal error.")
         console.log(error);
@@ -22,15 +25,39 @@ const add = async (req, res) => {
         const newProducts = new Product(req.body);
         await newProducts.save();
         res.status(200).send("Product created successfully.")
-    } catch(error) {
+    } catch (error) {
         res.status(500);
         res.end("Fatal error.")
         console.log(error);
     }
 }
 
+const update = async (req, res) => {
+    try {
+        await Product.findOneAndUpdate({ _id: req.key }, req.body, { new: true })
+        res.status(200).send("Product updated successfully.")
+    } catch (error) {
+        res.status(400);
+        res.end("Fatal error.")
+        console.log(error);
+    }
+}
+
+const remove = async (req, res) => {
+    try {
+        await Product.findOneAndDelete({ _id: req.key })
+        res.status(200).send("Product updated successfully.")
+    } catch (error) {
+        res.status(400);
+        res.end("Fatal error.")
+        console.log(error);
+    }
+}
+
+
 module.exports = {
-    list,
     fetch,
-    add
+    add,
+    update,
+    remove
 }

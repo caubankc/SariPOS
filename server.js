@@ -26,8 +26,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
 // routes
-app.use("/api/products/:id?", (req, res) => {
-    req.id = req.params.id;
+app.use("/api/products/:key?/:value?", (req, res) => {
+    req.value = req.params.value;
+    req.key = req.params.key;
+    //console.log(req.method);
+    //console.log(req.key);
     productRouter(req, res);
 });
 
