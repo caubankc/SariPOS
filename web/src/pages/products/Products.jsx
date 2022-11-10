@@ -25,6 +25,7 @@ const Products = () => {
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
     const filterData = (data, key) => {
       const items = data.map((item) => item[key]);
       const filtered = deduplicate(items);
@@ -38,13 +39,14 @@ const Products = () => {
     };
 
     const getAllProducts = async () => {
-      const result = await axios.get("/api/products");
+      const result = await axios.get("/api/products", { signal: abortController.signal });
       setProducts(result.data);
       setCategories(filterData(result.data, "category"));
       setStatuses(filterData(result.data, "status"));
     };
 
     getAllProducts().catch(console.error);
+    return () => abortController.abort();
   }, []);
 
   const columns = [
