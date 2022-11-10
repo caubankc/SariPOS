@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "../../components/Layout";
 import axios from "axios";
-import { Table, Space, Tag, Button, Switch } from "antd";
-import { EyeFilled, EditFilled } from '@ant-design/icons'
+import {
+  Table, Space, Tag, Button, Switch, Input, Modal, Form,
+  Select, InputNumber, Upload, message
+} from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { useDispatch } from "react-redux";
 
 const Products = () => {
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [statuses, setStatuses] = useState([]);
+  const [popModal, setPopModal] = useState(false);
+  const dispatch = useDispatch();
+  const { Search } = Input;
 
   const deduplicate = (a) => {
     var seen = {};
@@ -26,7 +33,6 @@ const Products = () => {
   };
 
   useEffect(() => {
-    const abortController = new AbortController();
     const filterData = (data, key) => {
       const items = data.map((item) => item[key]);
       const filtered = deduplicate(items);
@@ -40,15 +46,30 @@ const Products = () => {
     };
 
     const getAllProducts = async () => {
-      const result = await axios.get("/api/products", { signal: abortController.signal });
-      setProducts(result.data);
-      setCategories(filterData(result.data, "category"));
-      setStatuses(filterData(result.data, "status"));
+      dispatch({ type: "SHOW_LOADING" });
+      const { data } = await axios.get("/api/products");
+      setProducts(data);
+      setCategories(filterData(data, "category"));
+      setStatuses(filterData(data, "status"));
+      dispatch({ type: "HIDE_LOADING" });
     };
 
     getAllProducts().catch(console.error);
-    return () => abortController.abort();
   }, []);
+
+  const handlerSearch = (value) => console.log(value);
+
+  const handlerUpload = (file) => {
+    const acceptedFileTypes = [
+      'image/png',
+      'image/jpeg'
+    ]
+    const pass = acceptedFileTypes.includes(file.type);
+    if (!pass) {
+      message.error(`${file.name} is not a png or jpeg file`);
+    }
+    return pass || Upload.LIST_IGNORE;
+  }
 
   const columns = [
     {
@@ -95,8 +116,8 @@ const Products = () => {
     },
     {
       title: "Actions",
-      key: "action",
-      render: (_, record) => {
+      dataIndex: "_id",
+      render: (id, record) => {
         let text = true;
         if (record.status === "inactive") {
           text = false;
@@ -115,7 +136,61 @@ const Products = () => {
   return (
     <AppLayout>
       <h2>Products</h2>
+
+      <Search
+        className="search-box"
+        placeholder="product name"
+        onSearch={() => handlerSearch()} />
+
+      <Button
+        className="add-new"
+        onClick={() => setPopModal(true)}>
+        Add New</Button>
+
       <Table dataSource={products} columns={columns} rowKey={obj => obj.id} />
+
+      <Modal
+        title="Basic Modal"
+        open={popModal}
+        onCancel={() => setPopModal(false)}
+        footer={false}>
+        <Form
+          labelCol={{
+            span: 4,
+          }}
+          wrapperCol={{
+            span: 14,
+          }}
+          layout="horizontal">
+          <Form.Item name="name" label="Name">
+            <Input placeholder="product name" />
+          </Form.Item>
+          <Form.Item name="category" label="Category">
+            <Select defaultValue={"sweets"}>
+              <Select.Option value="snacks">Snacks</Select.Option>
+              <Select.Option value="sweets">Sweets</Select.Option>
+              <Select.Option value="drinks">Drinks</Select.Option>
+              <Select.Option value="canned_goods">Canned Goods</Select.Option>
+              <Select.Option value="cigars">Cigarettes</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="price" label="Price">
+            <InputNumber min={0.01} step={0.01} defaultValue={1.00} />
+          </Form.Item>
+          <Form.Item name="image" label="Image">
+            <Upload
+              action={"http://localhost:3000/upload-image"}
+              listType="picture"
+              beforeUpload={(file) => handlerUpload(file)} >
+              <Button icon={<UploadOutlined />}>
+                Upload PNG or JPEG
+              </Button>
+            </Upload>
+          </Form.Item>
+          <Button className="primary-btn">Add</Button>
+        </Form>
+      </Modal>
+
     </AppLayout>
   );
 };

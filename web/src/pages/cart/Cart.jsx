@@ -2,11 +2,10 @@ import React from "react";
 import AppLayout from "../../components/Layout";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    DeleteOutlined,
     PlusCircleOutlined,
     MinusCircleOutlined
 } from '@ant-design/icons';
-import { Table } from 'antd';
+import { Table, Button } from 'antd';
 
 const Cart = () => {
 
@@ -19,6 +18,19 @@ const Cart = () => {
             type: "UPDATE_CART",
             payload: { ...record, quantity: record.quantity + 1 }
         })
+    }
+
+    const handlerDecrement = (record) => {
+        if (record.quantity !== 1) {
+            dispatch({
+                type: "UPDATE_CART",
+                payload: { ...record, quantity: record.quantity - 1 }
+            })
+        }
+    }
+
+    const handlerDelete = (record) => {
+        dispatch({ type: "DELETE_FROM_CART", payload: record })
     }
 
     const columns = [
@@ -42,11 +54,17 @@ const Cart = () => {
             dataIndex: "_id",
             render: (id, record) => (
                 <div>
-                    <PlusCircleOutlined className='cart-plus' />
+                    <MinusCircleOutlined
+                        className='cart-minus'
+                        onClick={() => handlerDecrement(record)}
+                    />
                     <strong className='cart-quantity'>
                         {record.quantity}
                     </strong>
-                    <MinusCircleOutlined className='cart-minus' />
+                    <PlusCircleOutlined
+                        className='cart-plus'
+                        onClick={() => handlerIncrement(record)}
+                    />
                 </div>
             )
         },
@@ -54,7 +72,10 @@ const Cart = () => {
             title: "Action",
             dataIndex: "_id",
             render: (id, record) => (
-                <DeleteOutlined />
+                <Button
+                    className="danger-btn"
+                    onClick={() => handlerDelete(record)}
+                >Remove</Button>
             )
         }
     ];

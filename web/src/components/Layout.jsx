@@ -12,12 +12,14 @@ import React, { useEffect, useState } from 'react';
 import './layout.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Spinner from './Spinner';
+
 
 const { Header, Sider, Content } = Layout;
 
 const AppLayout = ({ children }) => {
 
-  const { cartItems } = useSelector(state => state.rootReducer);
+  const { cartItems, loading } = useSelector(state => state.rootReducer);
 
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
@@ -34,6 +36,7 @@ const AppLayout = ({ children }) => {
 
   return (
     <Layout>
+      {loading && <Spinner />}
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="logo">
           <h2 className="logo-title">Sari PoS</h2>

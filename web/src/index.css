@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .product-btn {
@@ -53,10 +53,24 @@ body {
   transition: all 0.2s!important;
 }
 
-.secondary-btn:hover {
+.secondary-btn:hover{
   background-color: white !important;
   color: teal !important;
   border: 1px solid teal !important;
+}
+
+.danger-btn{
+  display: block !important;
+  margin: 0 auto !important;
+  background-color: white !important;
+  color: maroon !important;
+  transition: all 0.2s!important;
+  border: 1px dotted maroon !important;
+}
+
+.danger-btn:hover {
+  background-color: maroon !important;
+  color: white !important;
 }
 
 .ant-switch-checked {
@@ -126,7 +140,7 @@ body {
 }
 
 .cart-action:hover {
-  filter: drop-shadow(0 0 2px #ff0000);
+  filter: drop-shadow(0 0 2px maroon);
   color: #ffffff;
 }
 
@@ -155,18 +169,37 @@ body {
 }
 
 .add-new {
-  display: block !important;
   margin: 0 0 15px auto !important;
   background-color: #001e28 !important;
   color: #ffffff !important;
-  box-shadow: 0 0 5px #001e28 !important;
-  transition: all 0.5s;
-  border: none !important;
+  transition: all 0.2s;
+  float: right !important;
 }
 
 .add-new:hover {
-  background-color: #ffffff !important;
-  color: #001e28 !important;
+  background-color: teal !important;
+  color: white !important;
+  border: 1px solid teal !important;
+}
+
+.search-box {
+  width: 300px !important;
+  float: left !important;
+}
+
+.search-box input:hover {
+  border: 0.1px solid teal !important;
+}
+
+.search-box button {
+  background-color: #001e28 !important;
+  color: white !important;
+  border: 1px solid #001e28 !important;
+}
+
+.search-box button:hover {
+  background-color: teal !important;
+  border: 1px solid teal !important;
 }
 
 .category {
