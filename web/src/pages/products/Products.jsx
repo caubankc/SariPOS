@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "../../components/Layout";
 import axios from "axios";
-import { Table, Space, Tag, Button } from "antd";
+import { Table, Space, Tag, Button, Switch } from "antd";
+import { EyeFilled, EditFilled } from '@ant-design/icons'
 
 const Products = () => {
 
@@ -96,16 +97,16 @@ const Products = () => {
       title: "Actions",
       key: "action",
       render: (_, record) => {
-        let text = "Deactivate";
+        let text = true;
         if (record.status === "inactive") {
-          text = "Activate";
+          text = false;
         }
         return (
           <Space size="middle">
-            <Button type="primary">View</Button>
-            <Button type="default">Edit</Button>
-            <Button type="default">{text}</Button>
-          </Space>
+            <Button className="primary-btn">View</Button>
+            <Button className="secondary-btn">Edit</Button>
+            <Switch checked={text} onClick={(text) => !text} />
+          </Space >
         );
       },
     },
@@ -114,7 +115,7 @@ const Products = () => {
   return (
     <AppLayout>
       <h2>Products</h2>
-      <Table dataSource={products} columns={columns} rowKey={obj => obj.id} bordered />
+      <Table dataSource={products} columns={columns} rowKey={obj => obj.id} />
     </AppLayout>
   );
 };

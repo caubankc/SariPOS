@@ -1,11 +1,25 @@
 import React from "react";
 import AppLayout from "../../components/Layout";
-import { useSelector } from "react-redux";
-import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { useSelector, useDispatch } from "react-redux";
+import {
+    DeleteOutlined,
+    PlusCircleOutlined,
+    MinusCircleOutlined
+} from '@ant-design/icons';
 import { Table } from 'antd';
 
 const Cart = () => {
+
+    const dispatch = useDispatch();
+
     const { cartItems } = useSelector((state) => state.rootReducer);
+
+    const handlerIncrement = (record) => {
+        dispatch({
+            type: "UPDATE_CART",
+            payload: { ...record, quantity: record.quantity + 1 }
+        })
+    }
 
     const columns = [
         {
@@ -16,7 +30,7 @@ const Cart = () => {
             title: "Image",
             dataIndex: "image",
             render: (image, record) => (
-                <img src={image} alt={record.name} height={60} width={60} />
+                <img src={"images" + image} alt={record.name} height={60} width={60} />
             ),
         },
         {
@@ -28,7 +42,11 @@ const Cart = () => {
             dataIndex: "_id",
             render: (id, record) => (
                 <div>
-                    <PlusCircleOutlined />
+                    <PlusCircleOutlined className='cart-plus' />
+                    <strong className='cart-quantity'>
+                        {record.quantity}
+                    </strong>
+                    <MinusCircleOutlined className='cart-minus' />
                 </div>
             )
         },

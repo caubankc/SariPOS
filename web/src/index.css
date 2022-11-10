@@ -20,14 +20,47 @@ body {
   margin: 0 auto;
   background-color: #001e28;
   color: #ffffff;
-  box-shadow: 0 0 5px #001e28;
-  transition: all 0.5s;
+  box-shadow: 0 0 2px #001e28;
+  transition: all 0.2s;
   border: none;
 }
 
 .product-btn button:hover {
-  background-color: #ffffff;
-  color: #001e28;
+  background-color: teal !important;
+  color: white !important;
+  border: 1px solid teal !important;
+}
+
+.primary-btn{
+  display: block !important;
+  margin: 0 auto !important;
+  background-color: #001e28 !important;
+  color: #ffffff !important;
+  transition: all 0.2s!important;
+}
+
+.primary-btn:hover {
+  background-color: teal !important;
+  color: white !important;
+  border: 1px solid teal !important;
+}
+
+.secondary-btn{
+  display: block !important;
+  margin: 0 auto !important;
+  background-color: white !important;
+  color: #001e28 !important;
+  transition: all 0.2s!important;
+}
+
+.secondary-btn:hover {
+  background-color: white !important;
+  color: teal !important;
+  border: 1px solid teal !important;
+}
+
+.ant-switch-checked {
+  background: teal !important;
 }
 
 .ant-layout-header {
