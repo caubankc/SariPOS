@@ -5,7 +5,6 @@ import {
   Table, Space, Tag, Button, Switch, Input, Modal, Form,
   Select, InputNumber, Upload, message
 } from "antd";
-import { UploadOutlined } from '@ant-design/icons';
 import { useDispatch } from "react-redux";
 
 const Products = () => {
@@ -16,6 +15,7 @@ const Products = () => {
   const [popModal, setPopModal] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [editProduct, setEditProduct] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const { Search } = Input;
 
@@ -46,20 +46,27 @@ const Products = () => {
     return object;
   };
 
-  const getAllProducts = async () => {
-    dispatch({ type: "SHOW_LOADING" });
-    const { data } = await axios.get("/api/products");
-    setProducts(data);
-    setCategories(filterData(data, "category"));
-    setStatuses(filterData(data, "status"));
-    dispatch({ type: "HIDE_LOADING" });
+  const getAllProducts = async (key, value) => {
+    setLoading(true);
+    let result;
+    if (key && value) {
+      result = await axios.get("/api/products/" + key + "/" + value);
+    } else {
+      result = await axios.get("/api/products");
+    }
+    setProducts(result.data);
+    setCategories(filterData(result.data, "category"));
+    setStatuses(filterData(result.data, "status"));
+    setLoading(false);
   };
 
   useEffect(() => {
     getAllProducts().catch(console.error);
   }, []);
 
-  const handlerSearch = (value) => console.log(value);
+  const handlerSearch = async (value) => {
+    getAllProducts('name', value);
+  };
 
   const handlerBeforeUpload = (file) => {
     const acceptedFileTypes = [
@@ -79,16 +86,19 @@ const Products = () => {
   }
 
   const handlerFormSubmit = async (value) => {
-    dispatch({ type: "SHOW_LOADING" });
+    console.log(editProduct);
     try {
-      const res = await axios.post('/api/products', value);
-      message.success("Product Added Successfully!")
+      if (!editProduct) {
+        await axios.post('/api/products', value);
+      } else {
+        await axios.put('/api/products/' + editProduct._id, value);
+      }
+      message.success("Product saved successfully!")
       getAllProducts();
       setPopModal(false);
     } catch {
-      message.error("Product recording failed.");
+      message.error("Product already exists.");
     }
-    dispatch({ type: "HIDE_LOADING" });
   }
 
   const columns = [
@@ -143,7 +153,7 @@ const Products = () => {
         return (
           <Space size="middle">
             <Button className="primary-btn">View</Button>
-            <Button className="secondary-btn" onClick={() => { setEditProduct(record); setPopModal(true) }}>Edit</Button>
+            <Button className="secondary-btn" onClick={() => { setEditProduct(record); setPopModal(true); }}>Edit</Button>
             <Switch checked={text} onClick={(text) => !text} />
           </Space >
         );
@@ -158,21 +168,26 @@ const Products = () => {
       <Search
         className="search-box"
         placeholder="product name"
-        onSearch={() => handlerSearch()} />
+        //onSearch={(value) => handlerSearch(value)}
+        onChange={(e) => handlerSearch(e.target.value)} />
 
       <Button
         className="add-new"
-        onClick={() => setPopModal(true)}>
+        onClick={() => { setPopModal(true); console.log(editProduct) }}>
         Add New</Button>
 
-      <Table dataSource={products} columns={columns} rowKey={(record) => record._id} />
+      <Table
+        dataSource={products}
+        columns={columns}
+        rowKey={(record) => record._id}
+        loading={loading} />
 
       <Modal
         title={`${editProduct !== null ? "Edit Product" : "Add New Product"}`}
         open={popModal}
         onCancel={() => {
-          setPopModal(false);
           setEditProduct(null);
+          setPopModal(false);
         }}
         footer={false}>
         <Form
@@ -196,7 +211,7 @@ const Products = () => {
           <Form.Item name="price" label="Price">
             <InputNumber min={0.01} step={0.01} required />
           </Form.Item>
-          <Form.Item name="image_file" label="Image">
+          {/* <Form.Item name="image_file" label="Image">
             <Upload
               maxCount={1}
               listType="picture"
@@ -206,8 +221,8 @@ const Products = () => {
                 Upload PNG or JPEG
               </Button>
             </Upload>
-          </Form.Item>
-          <Button className="primary-btn" htmlType="submit">Add</Button>
+          </Form.Item> */}
+          <Button className="primary-btn" htmlType="submit">Save</Button>
         </Form>
       </Modal>
 
