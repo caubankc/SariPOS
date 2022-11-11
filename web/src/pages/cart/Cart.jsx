@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import AppLayout from "../../components/Layout";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    PlusCircleOutlined,
-    MinusCircleOutlined
+    CaretLeftFilled,
+    CaretRightFilled
 } from '@ant-design/icons';
-import { Table, Button } from 'antd';
+import { Table, Button, Space } from 'antd';
 
 const Cart = () => {
 
     const dispatch = useDispatch();
-
     const { cartItems } = useSelector((state) => state.rootReducer);
+    const [loading, setLoading] = useState(false);
 
     const handlerIncrement = (record) => {
         dispatch({
@@ -54,14 +54,14 @@ const Cart = () => {
             dataIndex: "_id",
             render: (id, record) => (
                 <div>
-                    <MinusCircleOutlined
+                    <CaretLeftFilled
                         className='cart-minus'
                         onClick={() => handlerDecrement(record)}
                     />
                     <strong className='cart-quantity'>
                         {record.quantity}
                     </strong>
-                    <PlusCircleOutlined
+                    <CaretRightFilled
                         className='cart-plus'
                         onClick={() => handlerIncrement(record)}
                     />
@@ -72,10 +72,12 @@ const Cart = () => {
             title: "Action",
             dataIndex: "_id",
             render: (id, record) => (
-                <Button
-                    className="danger-btn"
-                    onClick={() => handlerDelete(record)}
-                >Remove</Button>
+                <Space>
+                    <Button
+                        className="danger-btn"
+                        onClick={() => handlerDelete(record)}
+                    >Remove</Button>
+                </Space>
             )
         }
     ];
@@ -83,7 +85,11 @@ const Cart = () => {
     return (
         <AppLayout>
             <h2>Cart</h2>
-            <Table dataSource={cartItems} columns={columns} rowKey={record => record._id} />
+            <Table
+                dataSource={cartItems}
+                columns={columns}
+                rowKey={record => record._id}
+                loading={loading} />
         </AppLayout>
     )
 
