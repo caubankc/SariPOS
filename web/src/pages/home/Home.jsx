@@ -21,14 +21,14 @@ const Home = () => {
     };
 
     getAllProducts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <AppLayout>
       <Row>
         {products.map((product) => (
           <Col xs={24} sm={24} md={12} lg={8} xl={6} xxl={4}>
-            <Product product={product} />
+            <Product key={product._id} product={product} />
           </Col>
         ))}
       </Row>

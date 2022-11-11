@@ -19,8 +19,7 @@ const { Header, Sider, Content } = Layout;
 
 const AppLayout = ({ children }) => {
 
-  const { cartItems, loading } = useSelector(state => state.rootReducer);
-
+  const { cartItems, loading, totalQuantity } = useSelector(state => state.rootReducer);
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
 
@@ -32,7 +31,8 @@ const AppLayout = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems])
+    localStorage.setItem('totalQuantity', totalQuantity);
+  }, [cartItems, totalQuantity])
 
   return (
     <Layout>
@@ -70,7 +70,7 @@ const AppLayout = ({ children }) => {
           })}
           <div className="cart-items" onClick={() => navigate('/cart')}>
             <ShoppingCartOutlined />
-            <span className="cart-bagde">{cartItems.length}</span>
+            <span className="cart-badge">{totalQuantity}</span>
           </div>
         </Header>
         <Content

@@ -15,6 +15,7 @@ const Products = () => {
   const [statuses, setStatuses] = useState([]);
   const [popModal, setPopModal] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [editProduct, setEditProduct] = useState(false);
   const dispatch = useDispatch();
   const { Search } = Input;
 
@@ -33,28 +34,28 @@ const Products = () => {
     return out;
   };
 
+  const filterData = (data, key) => {
+    const items = data.map((item) => item[key]);
+    const filtered = deduplicate(items);
+    const object = filtered.map((item) => {
+      return {
+        text: item,
+        value: item,
+      };
+    });
+    return object;
+  };
+
+  const getAllProducts = async () => {
+    dispatch({ type: "SHOW_LOADING" });
+    const { data } = await axios.get("/api/products");
+    setProducts(data);
+    setCategories(filterData(data, "category"));
+    setStatuses(filterData(data, "status"));
+    dispatch({ type: "HIDE_LOADING" });
+  };
+
   useEffect(() => {
-    const filterData = (data, key) => {
-      const items = data.map((item) => item[key]);
-      const filtered = deduplicate(items);
-      const object = filtered.map((item) => {
-        return {
-          text: item,
-          value: item,
-        };
-      });
-      return object;
-    };
-
-    const getAllProducts = async () => {
-      dispatch({ type: "SHOW_LOADING" });
-      const { data } = await axios.get("/api/products");
-      setProducts(data);
-      setCategories(filterData(data, "category"));
-      setStatuses(filterData(data, "status"));
-      dispatch({ type: "HIDE_LOADING" });
-    };
-
     getAllProducts().catch(console.error);
   }, []);
 
@@ -77,37 +78,27 @@ const Products = () => {
     setFileList(fileList);
   }
 
-  const handlerFormSubmit = (values) => {
-    console.log(JSON.stringify(fileList.file));
-    // event.preventDefault();
-    let formData = new FormData();
-    formData.append("file", fileList.file);
-    // console.log("File List: " + JSON.stringify(fileList[0]));
-    const URL = "http://localhost:5000/api/products";
-    axios.post(
-      URL, formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
-    ).then((res) => {
-      message.success("Product recorded successfully.");
-    }).catch((err) => {
+  const handlerFormSubmit = async (value) => {
+    dispatch({ type: "SHOW_LOADING" });
+    try {
+      const res = await axios.post('/api/products', value);
+      message.success("Product Added Successfully!")
+      getAllProducts();
+      setPopModal(false);
+    } catch {
       message.error("Product recording failed.");
-    })
+    }
+    dispatch({ type: "HIDE_LOADING" });
   }
 
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
-      key: "name",
     },
     {
       title: "Category",
       dataIndex: "category",
-      key: "category",
       filterSearch: true,
       filters: categories,
       onFilter: (value, record) => record.category.indexOf(value) === 0,
@@ -152,7 +143,7 @@ const Products = () => {
         return (
           <Space size="middle">
             <Button className="primary-btn">View</Button>
-            <Button className="secondary-btn">Edit</Button>
+            <Button className="secondary-btn" onClick={() => { setEditProduct(record); setPopModal(true) }}>Edit</Button>
             <Switch checked={text} onClick={(text) => !text} />
           </Space >
         );
@@ -174,17 +165,20 @@ const Products = () => {
         onClick={() => setPopModal(true)}>
         Add New</Button>
 
-      <Table dataSource={products} columns={columns} rowKey={obj => obj.id} />
+      <Table dataSource={products} columns={columns} rowKey={(record) => record._id} />
 
       <Modal
-        title="Basic Modal"
+        title={`${editProduct !== null ? "Edit Product" : "Add New Product"}`}
         open={popModal}
-        onCancel={() => setPopModal(false)}
+        onCancel={() => {
+          setPopModal(false);
+          setEditProduct(null);
+        }}
         footer={false}>
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 14 }}
-          initialValues={{ price: 1.00, category: 'snacks' }}
+          initialValues={editProduct}
           onFinish={handlerFormSubmit}
           layout="horizontal">
           <Form.Item name="name" label="Name">
@@ -217,7 +211,7 @@ const Products = () => {
         </Form>
       </Modal>
 
-    </AppLayout>
+    </AppLayout >
   );
 };
 

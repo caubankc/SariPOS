@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card } from "antd";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const Product = ({ product }) => {
 
     const dispatch = useDispatch();
+    const { cartItems } = useSelector((state) => state.rootReducer);
+    const [buttonText, setButtonText] = useState('Add To Cart');
 
     const handlerToCart = () => {
-        dispatch({
-            type: "ADD_TO_CART",
-            payload: { ...product, quantity: 1 }
-        })
+        dispatch({ type: "ADD_TO_CART", payload: { ...product, quantity: 1 } });
+        setButtonText('Add More');
     };
 
     return (
@@ -18,12 +18,13 @@ const Product = ({ product }) => {
             hoverable
             style={{ width: 240, marginBottom: 30 }}
             cover={
-                <img alt={product.name} src={"images" + product.image} style={{ height: 200 }} />
+                <img alt={product.name} src={"/images/" + product.image} style={{ height: 200 }} />
             }>
             <Card.Meta title={product.name} description={`$${product.price}`} />
             <div className="product-btn">
-                <Button onClick={() => handlerToCart()}>Add To Cart</Button>
+                <Button onClick={() => handlerToCart()}>{buttonText}</Button>
             </div>
+            <p style={{ textAlign: "center" }}><small>{cartItems.find(item => item._id === product._id) !== undefined ? cartItems.find(item => item._id === product._id).quantity + " added to cart" : ""} </small></p>
         </Card>
     );
 };

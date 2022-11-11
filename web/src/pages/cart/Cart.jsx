@@ -15,16 +15,16 @@ const Cart = () => {
 
     const handlerIncrement = (record) => {
         dispatch({
-            type: "UPDATE_CART",
-            payload: { ...record, quantity: record.quantity + 1 }
+            type: "INCREASE_QTY",
+            payload: { ...record, quantity: 1 }
         })
     }
 
     const handlerDecrement = (record) => {
         if (record.quantity !== 1) {
             dispatch({
-                type: "UPDATE_CART",
-                payload: { ...record, quantity: record.quantity - 1 }
+                type: "DECREASE_QTY",
+                payload: { ...record, quantity: 1 }
             })
         }
     }
@@ -42,7 +42,7 @@ const Cart = () => {
             title: "Image",
             dataIndex: "image",
             render: (image, record) => (
-                <img src={"images" + image} alt={record.name} height={60} width={60} />
+                <img src={"/images/" + image} alt={record.name} height={60} width={60} />
             ),
         },
         {
@@ -83,7 +83,7 @@ const Cart = () => {
     return (
         <AppLayout>
             <h2>Cart</h2>
-            <Table dataSource={cartItems} columns={columns} rowKey={obj => obj.id} />
+            <Table dataSource={cartItems} columns={columns} rowKey={record => record._id} />
         </AppLayout>
     )
 
