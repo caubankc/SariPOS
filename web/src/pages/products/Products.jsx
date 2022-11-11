@@ -14,6 +14,7 @@ const Products = () => {
   const [categories, setCategories] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [popModal, setPopModal] = useState(false);
+  const [fileList, setFileList] = useState([]);
   const dispatch = useDispatch();
   const { Search } = Input;
 
@@ -59,7 +60,7 @@ const Products = () => {
 
   const handlerSearch = (value) => console.log(value);
 
-  const handlerUpload = (file) => {
+  const handlerBeforeUpload = (file) => {
     const acceptedFileTypes = [
       'image/png',
       'image/jpeg'
@@ -67,8 +68,34 @@ const Products = () => {
     const pass = acceptedFileTypes.includes(file.type);
     if (!pass) {
       message.error(`${file.name} is not a png or jpeg file`);
+      return Upload.LIST_IGNORE;
     }
-    return pass || Upload.LIST_IGNORE;
+    return false; // return false to prevent auto upload
+  }
+
+  const handlerGetFile = (fileList) => {
+    setFileList(fileList);
+  }
+
+  const handlerFormSubmit = (values) => {
+    console.log(JSON.stringify(fileList.file));
+    // event.preventDefault();
+    let formData = new FormData();
+    formData.append("file", fileList.file);
+    // console.log("File List: " + JSON.stringify(fileList[0]));
+    const URL = "http://localhost:5000/api/products";
+    axios.post(
+      URL, formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      }
+    ).then((res) => {
+      message.success("Product recorded successfully.");
+    }).catch((err) => {
+      message.error("Product recording failed.");
+    })
   }
 
   const columns = [
@@ -155,18 +182,16 @@ const Products = () => {
         onCancel={() => setPopModal(false)}
         footer={false}>
         <Form
-          labelCol={{
-            span: 4,
-          }}
-          wrapperCol={{
-            span: 14,
-          }}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 14 }}
+          initialValues={{ price: 1.00, category: 'snacks' }}
+          onFinish={handlerFormSubmit}
           layout="horizontal">
           <Form.Item name="name" label="Name">
-            <Input placeholder="product name" />
+            <Input placeholder="product name" required />
           </Form.Item>
           <Form.Item name="category" label="Category">
-            <Select defaultValue={"sweets"}>
+            <Select>
               <Select.Option value="snacks">Snacks</Select.Option>
               <Select.Option value="sweets">Sweets</Select.Option>
               <Select.Option value="drinks">Drinks</Select.Option>
@@ -175,19 +200,20 @@ const Products = () => {
             </Select>
           </Form.Item>
           <Form.Item name="price" label="Price">
-            <InputNumber min={0.01} step={0.01} defaultValue={1.00} />
+            <InputNumber min={0.01} step={0.01} required />
           </Form.Item>
-          <Form.Item name="image" label="Image">
+          <Form.Item name="image_file" label="Image">
             <Upload
-              action={"http://localhost:3000/upload-image"}
+              maxCount={1}
               listType="picture"
-              beforeUpload={(file) => handlerUpload(file)} >
+              beforeUpload={(file) => handlerBeforeUpload(file)}
+              onChange={handlerGetFile}>
               <Button icon={<UploadOutlined />}>
                 Upload PNG or JPEG
               </Button>
             </Upload>
           </Form.Item>
-          <Button className="primary-btn">Add</Button>
+          <Button className="primary-btn" htmlType="submit">Add</Button>
         </Form>
       </Modal>
 
