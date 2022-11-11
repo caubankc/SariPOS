@@ -1,11 +1,10 @@
 const express = require('express');
-const productController = require('../controllers/productController.js');
-
+const { fetch, add, update, remove } = require('../controllers/productController.js');
 const productRouter = express.Router();
 
-productRouter.get("/", productController.fetch);
-productRouter.post("/", productController.add);
-productRouter.put("/", productController.update);
-productRouter.delete("/", productController.remove);
+productRouter.get("/", fetch);
+productRouter.post("/", add);
+productRouter.put("/", update);
+productRouter.delete("/", remove);
 
 module.exports = productRouter;
