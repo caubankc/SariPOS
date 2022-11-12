@@ -2,17 +2,15 @@ const Product = require('../models/productModel');
 
 const fetch = async (req, res) => {
     try {
-        let result = [];
-        if (req.key == null) {
-            result = await Product.find().sort({ _id: -1 })
-        } else if (req.key == 'id') {
-            result = await Product.findById(req.value);
-        } else if (req.key == 'name') {
-            result = await Product.find({ name: new RegExp(req.value, 'i') }).sort({ _id: -1 });
-        } else if (req.key) {
-            result = await Product.find()
-                .where(req.key).equals(req.value);
+        let query = {};
+        switch (req.key) {
+            case undefined:
+            case null: break;
+            case "id": query = { _id: req.value }; break;
+            case "name": query = { name: new RegExp(req.value, 'i') }; break;
+            default: query = { [req.key]: req.value }; break;
         }
+        result = await Product.find(query).sort({ _id: -1 });
         res.status(200).send(result)
     } catch (error) {
         res.status(400).end(error.message)
