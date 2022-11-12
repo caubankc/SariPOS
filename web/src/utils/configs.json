@@ -1,0 +1,21 @@
+{
+    "categories": {
+        "snacks": "Snacks",
+        "sweets": "Sweets",
+        "drinks": "Drinks",
+        "powdered_drinks": "Powdered Drinks",
+        "packed_goods": "Packed Goods",
+        "canned_goods": "Canned Goods",
+        "meat": "Meat",
+        "vegetables": "Vegetables",
+        "fruits": "Fruits",
+        "stationary": "Stationary",
+        "alcohol": "Alcohol",
+        "cigars": "Cigarettes",
+        "misc": "Miscellaneous"
+    },
+    "statuses": {
+        "inactive": "Inactive",
+        "active": "Active"
+    }
+}

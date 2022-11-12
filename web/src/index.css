@@ -54,8 +54,8 @@ body {
 }
 
 .secondary-btn:hover{
-  background-color: white !important;
-  color: teal !important;
+  background-color: teal !important;
+  color: white !important;
   border: 1px solid teal !important;
 }
 
@@ -63,14 +63,14 @@ body {
   display: block !important;
   margin: 0 auto !important;
   background-color: white !important;
-  color: maroon !important;
+  color: #001e28 !important;
   transition: all 0.2s!important;
-  border: 1px dotted maroon !important;
 }
 
 .danger-btn:hover {
   background-color: maroon !important;
   color: white !important;
+  border: 1px solid maroon !important;
 }
 
 .ant-switch-checked {

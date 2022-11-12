@@ -5,7 +5,9 @@ import {
   Table, Space, Tag, Button, Switch, Input, Modal, Form,
   Select, InputNumber, Upload, message
 } from "antd";
+import { DeleteFilled, EyeFilled, EditFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useDispatch } from "react-redux";
+import configs from '../../utils/configs.json';
 
 const Products = () => {
 
@@ -16,35 +18,45 @@ const Products = () => {
   const [fileList, setFileList] = useState([]);
   const [editProduct, setEditProduct] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
   const { Search } = Input;
+  const { confirm } = Modal;
 
-  const deduplicate = (a) => {
-    var seen = {};
-    var out = [];
-    var len = a.length;
-    var j = 0;
-    for (var i = 0; i < len; i++) {
-      var item = a[i];
-      if (seen[item] !== 1) {
-        seen[item] = 1;
-        out[j++] = item;
-      }
+  // const deduplicate = (a) => {
+  //   var seen = {};
+  //   var out = [];
+  //   var len = a.length;
+  //   var j = 0;
+  //   for (var i = 0; i < len; i++) {
+  //     var item = a[i];
+  //     if (seen[item] !== 1) {
+  //       seen[item] = 1;
+  //       out[j++] = item;
+  //     }
+  //   }
+  //   return out;
+  // };
+
+  // const filterData = (data, key) => {
+  //   const items = data.map((item) => item[key]);
+  //   const filtered = deduplicate(items);
+  //   const object = filtered.map((item) => {
+  //     return {
+  //       text: item,
+  //       value: item,
+  //     };
+  //   });
+  //   return object;
+  // };
+
+  const parseConfigs = (configKey) => {
+    const config = configs[configKey];
+    let object = [];
+    for (let key in config) {
+      let value = config[key];
+      object.push({ text: value, value: key, label: value });
     }
-    return out;
-  };
-
-  const filterData = (data, key) => {
-    const items = data.map((item) => item[key]);
-    const filtered = deduplicate(items);
-    const object = filtered.map((item) => {
-      return {
-        text: item,
-        value: item,
-      };
-    });
     return object;
-  };
+  }
 
   const getAllProducts = async (key, value) => {
     setLoading(true);
@@ -55,8 +67,8 @@ const Products = () => {
       result = await axios.get("/api/products");
     }
     setProducts(result.data);
-    setCategories(filterData(result.data, "category"));
-    setStatuses(filterData(result.data, "status"));
+    setCategories(parseConfigs("categories"));
+    setStatuses(parseConfigs("statuses"));
     setLoading(false);
   };
 
@@ -93,11 +105,48 @@ const Products = () => {
       } else {
         await axios.put('/api/products/' + editProduct._id, value);
       }
-      message.success("Product saved successfully!")
+      message.success(editProduct.name + " details saved successfully!")
       getAllProducts();
       setPopModal(false);
     } catch {
-      message.error("Product already exists.");
+      message.error(value.name + " already exists.");
+    }
+  }
+
+  const handlerDelete = async (record) => {
+    try {
+      await axios.delete('/api/products/' + record._id);
+      message.success(record.name + " deleted successfully.")
+      getAllProducts();
+      setPopModal(false);
+    } catch {
+      message.error(record.name + " deletion failed.");
+    }
+  }
+
+  const confirmDelete = (record) => {
+    confirm({
+      icon: <ExclamationCircleOutlined />,
+      content: <p>Are you sure you want to proceed with deleting <strong>{record.name}</strong> ({record.category})? You cannot recover it once done.</p>,
+      onOk() { handlerDelete(record) },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
+  const handleToggle = async (record) => {
+    try {
+      let status = "inactive";
+      if (record.status === 'inactive') {
+        status = 'active';
+      };
+      await axios.put('/api/products/' + record._id, { status: status });
+      message.success(record.name + " status was set to " + status + ".")
+      getAllProducts();
+      setPopModal(false);
+    } catch {
+      message.error(record.name + " status update failed.");
     }
   }
 
@@ -112,6 +161,13 @@ const Products = () => {
       filterSearch: true,
       filters: categories,
       onFilter: (value, record) => record.category.indexOf(value) === 0,
+      render: (record) => {
+        const category = configs.categories[record];
+        return (
+          <>{category}</>
+
+        )
+      }
     },
     {
       title: "Price",
@@ -152,9 +208,10 @@ const Products = () => {
         }
         return (
           <Space size="middle">
-            <Button className="primary-btn">View</Button>
-            <Button className="secondary-btn" onClick={() => { setEditProduct(record); setPopModal(true); }}>Edit</Button>
-            <Switch checked={text} onClick={(text) => !text} />
+            <Switch checked={text} onClick={() => handleToggle(record)} />
+            <Button className="primary-btn" shape="circle"><EyeFilled /></Button>
+            <Button className="secondary-btn" shape="circle" onClick={() => { setEditProduct(record); setPopModal(true); }}><EditFilled /></Button>
+            <Button className="danger-btn" shape="circle" onClick={() => { confirmDelete(record); }}><DeleteFilled /></Button>
           </Space >
         );
       },
@@ -200,13 +257,8 @@ const Products = () => {
             <Input placeholder="product name" required />
           </Form.Item>
           <Form.Item name="category" label="Category">
-            <Select>
-              <Select.Option value="snacks">Snacks</Select.Option>
-              <Select.Option value="sweets">Sweets</Select.Option>
-              <Select.Option value="drinks">Drinks</Select.Option>
-              <Select.Option value="canned_goods">Canned Goods</Select.Option>
-              <Select.Option value="cigars">Cigarettes</Select.Option>
-            </Select>
+            <Select
+              options={categories} />
           </Form.Item>
           <Form.Item name="price" label="Price">
             <InputNumber min={0.01} step={0.01} required />
@@ -225,7 +277,6 @@ const Products = () => {
           <Button className="primary-btn" htmlType="submit">Save</Button>
         </Form>
       </Modal>
-
     </AppLayout >
   );
 };
