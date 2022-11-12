@@ -18,7 +18,7 @@ const Product = ({ product }) => {
             hoverable
             style={{ width: 240, marginBottom: 30 }}
             cover={
-                <img alt={product.name} src={"/images/" + product.image} style={{ height: 200 }} />
+                <img alt={product.name} src={"/images/products/" + product.image} style={{ height: 200 }} />
             }>
             <Card.Meta title={product.name} description={`$${product.price}`} />
             <div className="product-btn">

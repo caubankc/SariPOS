@@ -42,7 +42,7 @@ const Cart = () => {
             title: "Image",
             dataIndex: "image",
             render: (image, record) => (
-                <img src={"/images/" + image} alt={record.name} height={60} width={60} />
+                <img src={"/images/products/" + image} alt={record.name} height={60} width={60} />
             ),
         },
         {

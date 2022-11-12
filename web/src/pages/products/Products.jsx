@@ -6,8 +6,8 @@ import {
   Select, InputNumber, Upload, message
 } from "antd";
 import { DeleteFilled, EyeFilled, EditFilled, ExclamationCircleOutlined } from '@ant-design/icons';
-import { useDispatch } from "react-redux";
 import configs from '../../utils/configs.json';
+import parseConfigs from "../../helpers/configParser";
 
 const Products = () => {
 
@@ -48,16 +48,6 @@ const Products = () => {
   //   return object;
   // };
 
-  const parseConfigs = (configKey) => {
-    const config = configs[configKey];
-    let object = [];
-    for (let key in config) {
-      let value = config[key];
-      object.push({ text: value, value: key, label: value });
-    }
-    return object;
-  }
-
   const getAllProducts = async (key, value) => {
     setLoading(true);
     let result;
@@ -67,12 +57,12 @@ const Products = () => {
       result = await axios.get("/api/products");
     }
     setProducts(result.data);
-    setCategories(parseConfigs("categories"));
-    setStatuses(parseConfigs("statuses"));
     setLoading(false);
   };
 
   useEffect(() => {
+    setCategories(parseConfigs("categories"));
+    setStatuses(parseConfigs("statuses"));
     getAllProducts().catch(console.error);
   }, []);
 
