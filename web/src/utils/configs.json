@@ -1,4 +1,8 @@
 {
+    "active_currency": "₱",
+    "currencies": {
+        "Philippine Peso": "₱"
+    },
     "categories": {
         "snacks": "Snacks",
         "sweets": "Sweets",
@@ -6,6 +10,9 @@
         "powdered_drinks": "Powdered Drinks",
         "packed_goods": "Packed Goods",
         "canned_goods": "Canned Goods",
+        "spreads": "Spreads",
+        "dairy": "Dairy",
+        "bread": "Bread",
         "meat": "Meat",
         "vegetables": "Vegetables",
         "fruits": "Fruits",

@@ -3,9 +3,18 @@ const Order = require('../models/orderModel');
 //for add or fetch
 const fetch = async (req, res) => {
     try {
-        const orders = await Order.find();
-        res.send(orders);
+        let query = {};
+        switch (req.key) {
+            case undefined:
+            case null: break;
+            case "orderId": query = { orderId: req.value }; break;
+            case "customerId": query = { customerId: new RegExp(req.value, 'i') }; break;
+            default: query = { [req.key]: req.value }; break;
+        }
+        result = await Order.find(query).sort({ _id: -1 });
+        res.status(200).send(result)
     } catch (error) {
+        res.status(400).end(error.message)
         console.log(error);
     }
 }
@@ -20,12 +29,12 @@ const add = async (req, res) => {
     }
 }
 
-const cancel = async (req, res) => {
+const update = async (req, res) => {
     try {
-        const newOrder = new Order(req.body);
-        await newOrder.save();
-        res.send("Order created successfully.");
+        await Product.findOneAndUpdate({ _id: req.key }, req.body, { new: true });
+        res.status(200).send("Order updated successfully.")
     } catch (error) {
+        res.status(400).end(error.message);
         console.log(error);
     }
 }
@@ -33,5 +42,5 @@ const cancel = async (req, res) => {
 module.exports = {
     fetch,
     add,
-    cancel
+    update
 }

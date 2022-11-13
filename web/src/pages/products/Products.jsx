@@ -7,7 +7,7 @@ import {
 } from "antd";
 import { DeleteFilled, EyeFilled, EditFilled, ExclamationCircleOutlined } from '@ant-design/icons';
 import configs from '../../utils/configs.json';
-import parseConfigs from "../../helpers/configParser";
+import { getConfig, parseConfigs, returnConfig } from "../../helpers/configHelper";
 
 const Products = () => {
 
@@ -20,33 +20,6 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const { Search } = Input;
   const { confirm } = Modal;
-
-  // const deduplicate = (a) => {
-  //   var seen = {};
-  //   var out = [];
-  //   var len = a.length;
-  //   var j = 0;
-  //   for (var i = 0; i < len; i++) {
-  //     var item = a[i];
-  //     if (seen[item] !== 1) {
-  //       seen[item] = 1;
-  //       out[j++] = item;
-  //     }
-  //   }
-  //   return out;
-  // };
-
-  // const filterData = (data, key) => {
-  //   const items = data.map((item) => item[key]);
-  //   const filtered = deduplicate(items);
-  //   const object = filtered.map((item) => {
-  //     return {
-  //       text: item,
-  //       value: item,
-  //     };
-  //   });
-  //   return object;
-  // };
 
   const getAllProducts = async (key, value) => {
     setLoading(true);
@@ -151,11 +124,9 @@ const Products = () => {
       filterSearch: true,
       filters: categories,
       onFilter: (value, record) => record.category.indexOf(value) === 0,
-      render: (record) => {
-        const category = configs.categories[record];
+      render: (category) => {
         return (
-          <>{category}</>
-
+          <>{getConfig("categories")[category]}</>
         )
       }
     },
@@ -163,23 +134,18 @@ const Products = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      sorter: (record) => record.price,
+      sorter: (prev, current) => prev.price - current.price,
+      render: (price) => (
+        <>{price.toFixed(2)}</>
+      )
     },
     {
-      title: "Status",
+      title: "Enabled",
       dataIndex: "status",
       key: "status",
-      render: (_, record) => {
-        let color = "green";
-        if (record.status === "inactive") {
-          color = "volcano";
-        }
-        return (
-          <Tag color={color} key={record.status}>
-            {record.status.toUpperCase()}
-          </Tag>
-        );
-      },
+      render: (status, record) => (
+        <><Switch checked={status !== "inactive"} onClick={() => handleToggle(record)} /></>
+      ),
       filters: statuses.map((item) => {
         return {
           text: item.text.toUpperCase(),
@@ -192,13 +158,8 @@ const Products = () => {
       title: "Actions",
       dataIndex: "_id",
       render: (id, record) => {
-        let text = true;
-        if (record.status === "inactive") {
-          text = false;
-        }
         return (
           <Space size="middle">
-            <Switch checked={text} onClick={() => handleToggle(record)} />
             <Button className="primary-btn" shape="circle"><EyeFilled /></Button>
             <Button className="secondary-btn" shape="circle" onClick={() => { setEditProduct(record); setPopModal(true); }}><EditFilled /></Button>
             <Button className="danger-btn" shape="circle" onClick={() => { confirmDelete(record); }}><DeleteFilled /></Button>

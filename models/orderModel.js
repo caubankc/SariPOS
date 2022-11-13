@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
+const orderId = require('order-id')('key');
+const { generateCustomerId } = require('../helpers/idHelper');
 
 const orderSchema = new mongoose.Schema({
 
+    orderId: { type: String, default: orderId.generate(), required: true },
     customerName: { type: String, required: true },
     customerPhone: { type: Number, required: true },
     customerAddress: { type: String, required: true },
@@ -13,6 +16,11 @@ const orderSchema = new mongoose.Schema({
 
 }, {
     timestamps: true
+});
+
+// computed field customerId
+orderSchema.virtual('customerId').get(function () {
+    return generateCustomerId(this.customerName);
 });
 
 const Order = mongoose.model("Order", orderSchema);

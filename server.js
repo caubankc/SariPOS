@@ -8,6 +8,7 @@ const visitRecorder = require('./helpers/visitRecorderHelper');
 const productRouter = require('./routes/productRoutes');
 const path = require('path');
 const fileRouter = require('./routes/fileRoutes');
+const orderRouter = require('./routes/orderRoutes');
 
 dotenv.config();
 connect(process.env.MONGODB_URI);
@@ -25,6 +26,12 @@ app.use("/api/products/:key?/:value?", (req, res) => {
     req.value = req.params.value;
     req.key = req.params.key;
     productRouter(req, res);
+});
+
+app.use("/api/orders/:key?/:value?", (req, res) => {
+    req.value = req.params.value;
+    req.key = req.params.key;
+    orderRouter(req, res);
 });
 
 app.use("/api/files/:key?", (req, res) => {

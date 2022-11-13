@@ -10,4 +10,11 @@ const parseConfigs = (configKey) => {
     return object;
 }
 
-export default parseConfigs;
+const getConfig = (configKey) => {
+    return configs[configKey];
+}
+
+export {
+    parseConfigs,
+    getConfig
+}

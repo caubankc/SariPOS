@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Card } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { getConfig } from "../helpers/configHelper";
 
 const Product = ({ product }) => {
 
@@ -20,7 +21,7 @@ const Product = ({ product }) => {
             cover={
                 <img alt={product.name} src={"/images/products/" + product.image} style={{ height: 200 }} />
             }>
-            <Card.Meta title={product.name} description={`$${product.price}`} />
+            <Card.Meta title={product.name} description={getConfig("active_currency") + ` ${product.price.toFixed(2)}`} />
             <div className="product-btn">
                 <Button onClick={() => handlerToCart()}>{buttonText}</Button>
             </div>

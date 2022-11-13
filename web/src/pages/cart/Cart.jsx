@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../../components/Layout";
 import { useSelector, useDispatch } from "react-redux";
 import {
     CaretLeftFilled,
     CaretRightFilled
 } from '@ant-design/icons';
-import { Table, Button, Space } from 'antd';
+import { Table, Button, Space, Modal, Form, Input, Select, message, Row, Col } from 'antd';
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { getConfig } from "../../helpers/configHelper";
 
 const Cart = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { cartItems } = useSelector((state) => state.rootReducer);
     const [loading, setLoading] = useState(false);
+    const [subTotal, setSubTotal] = useState(0);
+    const [billPopUp, setBillPopUp] = useState(false);
+    const [customerId, setCustomerId] = useState('');
+    // const [filteredItems, setFilteredItems] = useState(cartItems);
 
     const handlerIncrement = (record) => {
         dispatch({
@@ -33,6 +41,12 @@ const Cart = () => {
         dispatch({ type: "DELETE_FROM_CART", payload: record })
     }
 
+    const getSubTotal = (cartItems) => {
+        let subTotal = 0;
+        cartItems.forEach((product) => (subTotal = subTotal + product.price * product.quantity));
+        return subTotal;
+    }
+
     const columns = [
         {
             title: "Name",
@@ -48,6 +62,9 @@ const Cart = () => {
         {
             title: "Price",
             dataIndex: "price",
+            render: (price) => (
+                <>{price.toFixed(2)}</>
+            )
         },
         {
             title: "Quantity",
@@ -82,15 +99,77 @@ const Cart = () => {
         }
     ];
 
+    useEffect(() => {
+        setSubTotal(getSubTotal(cartItems));
+    }, [cartItems]);
+
+    const handlerSubmit = async (value) => {
+        //console.log(value);
+        try {
+            const newObject = {
+                ...value,
+                cartItems,
+                subTotal,
+                tax: Number(((subTotal / 100) * 10).toFixed(2)),
+                totalAmount: Number((Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))).toFixed(2)),
+                //userId: JSON.parse(localStorage.getItem("auth"))._id
+                userId: "ADMIN0001"
+            }
+            await axios.post("/api/orders/", newObject);
+            message.success("Invoice has been generated!");
+            navigate("/bills");
+        } catch (error) {
+            message.error("Error!")
+            console.log(error);
+        }
+    }
+
+    // const generateCustomerId = (event) => {
+    //     console.log(customerId);
+    //     setCustomerId(event.target.value);
+    // }
+
     return (
         <AppLayout>
-            <h2>Cart</h2>
+            <h2 style={{ float: "left" }}>Cart</h2>
+            <h2 style={{ float: "right" }}>Sub Total: <span>{getConfig("active_currency") + " " + (subTotal).toFixed(2)}</span></h2>
+            <div style={{ clear: "both" }}>
+                <Button onClick={() => setBillPopUp(true)} className='add-new'>Create Invoice</Button>
+            </div>
             <Table
                 dataSource={cartItems}
                 columns={columns}
                 rowKey={record => record._id}
                 loading={loading} />
-        </AppLayout>
+            <Modal title="Create Invoice" visible={billPopUp} onCancel={() => setBillPopUp(false)} footer={false}>
+                <Form layout='vertical' onFinish={handlerSubmit}>
+                    <Form.Item name="customerName" label="Customer Name">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="customerPhone" label="Customer Phone">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="customerAddress" label="Customer Address">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="paymentMethod" label="Payment Method">
+                        <Select>
+                            <Select.Option value="cash">Cash</Select.Option>
+                            <Select.Option value="paypal">Paypal</Select.Option>
+                            <Select.Option value="Card">Card</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    <div className="total">
+                        <span>SubTotal: {getConfig("active_currency") + " " + (subTotal.toFixed(2))}</span><br />
+                        <span>Tax: {getConfig("active_currency") + " " + ((subTotal / 100) * 10).toFixed(2)}</span>
+                        <h3>Total: {getConfig("active_currency") + " " + (Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))).toFixed(2)}</h3>
+                    </div>
+                    <div className="form-btn-add">
+                        <Button htmlType='submit' className='add-new'>Generate Invoice</Button>
+                    </div>
+                </Form>
+            </Modal>
+        </AppLayout >
     )
 
 };
