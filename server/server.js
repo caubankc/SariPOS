@@ -46,7 +46,7 @@ app.use("/api/visits", (req, res) => {
 });
 
 // create port
-const PORT = process.env.PORT || 5000;
+const PORT = 8000;
 const HOSTNAME = process.env.HOSTNAME || "localhost";
 
 // listen

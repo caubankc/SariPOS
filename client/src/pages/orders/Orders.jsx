@@ -1,4 +1,4 @@
-import { Button, Modal, Table } from 'antd';
+import { Button, Modal, Row, Table, Col } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react'
 import ReactToPrint from 'react-to-print';
@@ -93,7 +93,7 @@ const Orders = () => {
 
             {
                 popModal &&
-                <Modal title="Invoice Details" width={400} pagination={false} visible={popModal} onCancel={() => setPopModal(false)} footer={false}>
+                <Modal title="Invoice Details" width={440} pagination={false} visible={popModal} onCancel={() => setPopModal(false)} footer={false}>
                     <div className="card" ref={componentRef}>
                         <div className="cardHeader">
                             <h2 className="logo">{getConfig("shop_brand")}</h2>
@@ -118,6 +118,14 @@ const Orders = () => {
                                 <span><b>{selectedBill.createdAt.toString().substring(0, 10)}</b></span>
                             </div>
                             <div className="group">
+                                <span>Total Sales:</span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.totalSales}</b></span>
+                            </div>
+                            <div className="group">
+                                <span>Tax:</span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.tax}</b></span>
+                            </div>
+                            <div className="group">
                                 <span>Total Amount:</span>
                                 <span><b>{getConfig("active_currency")} {selectedBill.totalAmount}</b></span>
                             </div>
@@ -127,25 +135,25 @@ const Orders = () => {
                             {selectedBill.cartItems.map((product) => (
                                 <>
                                     <div className="footerCard">
-                                        <div className="group">
-                                            <span>Product:</span>
-                                            <span><b>{product.name}</b></span>
-                                        </div>
-                                        <div className="group">
-                                            <span>Qty:</span>
-                                            <span><b>{product.quantity}</b></span>
-                                        </div>
-                                        <div className="group">
-                                            <span>Price:</span>
-                                            <span><b>{getConfig("active_currency")} {product.price}</b></span>
-                                        </div>
+                                        <Row>
+                                            <Col xs={16} s={18}>
+                                                <span>{product.name}</span>
+                                            </Col>
+                                            <Col xs={2} s={2}>
+                                                <span>{product.quantity}</span>
+                                            </Col>
+                                            <Col xs={6} s={4}>
+                                                <span>{getConfig("active_currency")} {product.price.toFixed(2)}</span>
+                                            </Col>
+
+                                        </Row>
                                     </div>
                                 </>
                             ))}
                             <div className="footerCardTotal">
                                 <div className="group">
                                     <h3>Total:</h3>
-                                    <h3><b>{getConfig("active_currency")} {selectedBill.totalAmount}</b></h3>
+                                    <h3> <b>{getConfig("active_currency")}{selectedBill.totalAmount}</b></h3>
                                 </div>
                             </div>
                             <div className="footerThanks">

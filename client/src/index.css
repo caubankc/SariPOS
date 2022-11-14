@@ -308,6 +308,10 @@ body {
   text-align: right;
 }
 
+.card {
+  padding: 0 20px 0 20px;
+}
+
 .cardHeader h2 {
   letter-spacing: 1.3px;
   color: #001e28;
@@ -352,7 +356,7 @@ body {
 
 .footerCardTotal {
   width: 100px;
-  margin: 25px 0 0 auto;
+  margin: 25px 25px 0 auto;
 }
 
 .footerCardTotal .group {
