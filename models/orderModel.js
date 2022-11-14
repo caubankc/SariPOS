@@ -9,6 +9,7 @@ const orderSchema = new mongoose.Schema({
     customerPhone: { type: Number, required: true },
     customerAddress: { type: String, required: true },
     subTotal: { type: Number, required: true },
+    totalSales: { type: Number, required: true },
     totalAmount: { type: Number, required: true },
     tax: { type: Number, required: true },
     paymentMethod: { type: String, required: true },

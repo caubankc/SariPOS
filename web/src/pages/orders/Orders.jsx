@@ -60,8 +60,8 @@ const Orders = () => {
             dataIndex: "customerAddress",
         },
         {
-            title: "Sub Total",
-            dataIndex: "subTotal",
+            title: "Total Sales",
+            dataIndex: "totalSales",
         },
         {
             title: "Tax",
@@ -119,7 +119,7 @@ const Orders = () => {
                             </div>
                             <div className="group">
                                 <span>Total Amount:</span>
-                                <span><b>${selectedBill.totalAmount}</b></span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.totalAmount}</b></span>
                             </div>
                         </div>
                         <div className="cardFooter">
@@ -137,7 +137,7 @@ const Orders = () => {
                                         </div>
                                         <div className="group">
                                             <span>Price:</span>
-                                            <span><b>${product.price}</b></span>
+                                            <span><b>{getConfig("active_currency")} {product.price}</b></span>
                                         </div>
                                     </div>
                                 </>
@@ -145,7 +145,7 @@ const Orders = () => {
                             <div className="footerCardTotal">
                                 <div className="group">
                                     <h3>Total:</h3>
-                                    <h3><b>${selectedBill.totalAmount}</b></h3>
+                                    <h3><b>{getConfig("active_currency")} {selectedBill.totalAmount}</b></h3>
                                 </div>
                             </div>
                             <div className="footerThanks">

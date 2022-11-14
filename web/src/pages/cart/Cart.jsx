@@ -110,8 +110,10 @@ const Cart = () => {
                 ...value,
                 cartItems,
                 subTotal,
-                tax: Number(((subTotal / 100) * 10).toFixed(2)),
-                totalAmount: Number((Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))).toFixed(2)),
+                totalSales: Number((subTotal * (100 - getConfig("tax")) / 100).toFixed(2)),
+                //tax: Number(((subTotal / 100) * 10).toFixed(2)),
+                tax: Number((subTotal * getConfig("tax") / 100).toFixed(2)),
+                totalAmount: Number(subTotal.toFixed(2)),
                 //userId: JSON.parse(localStorage.getItem("auth"))._id
                 userId: "ADMIN0001"
             }
@@ -161,9 +163,9 @@ const Cart = () => {
                         </Select>
                     </Form.Item>
                     <div className="total">
-                        <span>SubTotal: {getConfig("active_currency") + " " + (subTotal.toFixed(2))}</span><br />
-                        <span>Tax: {getConfig("active_currency") + " " + ((subTotal / 100) * 10).toFixed(2)}</span>
-                        <h3>Total: {getConfig("active_currency") + " " + (Number(subTotal) + Number(((subTotal / 100) * 10).toFixed(2))).toFixed(2)}</h3>
+                        <span>Total Sales: {getConfig("active_currency") + " " + (subTotal * (100 - getConfig("tax")) / 100).toFixed(2)}</span><br />
+                        <span>Tax ({getConfig("tax")}%): {getConfig("active_currency") + " " + (subTotal * getConfig("tax") / 100).toFixed(2)}</span>
+                        <h3>Total: {getConfig("active_currency") + " " + subTotal.toFixed(2)}</h3>
                     </div>
                     <div className="form-btn-add">
                         <Button htmlType='submit' className='add-new'>Generate Invoice</Button>
