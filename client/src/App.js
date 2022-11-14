@@ -22,6 +22,7 @@ function App() {
   //   getData();
   // }, [])
 
+
   return (
     <>
       <Router>
