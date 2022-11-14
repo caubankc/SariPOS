@@ -13,6 +13,7 @@ import './layout.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Spinner from './Spinner';
+import { getConfig } from '../helpers/configHelper';
 
 
 const { Header, Sider, Content } = Layout;
@@ -39,14 +40,14 @@ const AppLayout = ({ children }) => {
       {loading && <Spinner />}
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="logo">
-          <h2 className="logo-title">Sari PoS</h2>
+          <h2 className="logo-title">{getConfig("shop_brand")}</h2>
         </div>
         <Menu
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['1']}>
           <Menu.Item key="/" icon={<HomeOutlined />}>
-            <Link to="/">Home</Link>
+            <Link to="/">Shop</Link>
           </Menu.Item>
           <Menu.Item key="/orders" icon={<MoneyCollectOutlined />}>
             <Link to="/orders">Orders</Link>

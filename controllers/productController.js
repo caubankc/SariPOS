@@ -10,7 +10,7 @@ const fetch = async (req, res) => {
             case "name": query = { name: new RegExp(req.value, 'i') }; break;
             default: query = { [req.key]: req.value }; break;
         }
-        result = await Product.find(query).sort({ _id: -1 });
+        result = await Product.find(query).sort({ name: 1 });
         res.status(200).send(result)
     } catch (error) {
         res.status(400).end(error.message)

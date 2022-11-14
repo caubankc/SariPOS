@@ -1,4 +1,7 @@
 {
+    "shop_brand": "Sari PoS",
+    "shop_phone": "(02) 7777-777",
+    "shop_address": "Manila, Philippines",
     "active_currency": "₱",
     "currencies": {
         "Philippine Peso": "₱"

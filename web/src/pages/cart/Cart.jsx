@@ -116,8 +116,9 @@ const Cart = () => {
                 userId: "ADMIN0001"
             }
             await axios.post("/api/orders/", newObject);
-            message.success("Invoice has been generated!");
-            navigate("/bills");
+            message.success("Invoice has been generated! Cart has been cleared.");
+            dispatch({ type: "RESET_CART" });
+            navigate("/orders");
         } catch (error) {
             message.error("Error!")
             console.log(error);

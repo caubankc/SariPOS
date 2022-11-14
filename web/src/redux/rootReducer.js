@@ -49,6 +49,12 @@ export const rootReducer = (state = initialState, action) => {
                 cartItems: state.cartItems.filter((product) => product._id !== action.payload._id),
                 totalQuantity: state.totalQuantity - toDeductQuantity
             };
+        case "RESET_CART":
+            return {
+                ...state,
+                cartItems: [],
+                totalQuantity: 0
+            }
         default: return state;
     }
 }

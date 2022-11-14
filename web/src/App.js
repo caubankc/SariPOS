@@ -6,6 +6,7 @@ import Products from './pages/products/Products';
 import Cart from './pages/cart/Cart';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Orders from './pages/orders/Orders';
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
           <Route path="/" element={<Home></Home>} />
           <Route path="/products" element={<Products></Products>} />
           <Route path="/cart" element={<Cart></Cart>} />
+          <Route path="/bills" element={<Home></Home>} />
+          <Route path="/orders" element={<Orders></Orders>} />
+          <Route path="/customers " element={<Home></Home>} />
         </Routes>
       </Router>
     </>

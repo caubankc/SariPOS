@@ -17,6 +17,8 @@ const Products = () => {
   const [popModal, setPopModal] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [editProduct, setEditProduct] = useState(false);
+  const [searchFilter, setSearchFilter] = useState('');
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const { Search } = Input;
   const { confirm } = Modal;
@@ -36,12 +38,19 @@ const Products = () => {
   useEffect(() => {
     setCategories(parseConfigs("categories"));
     setStatuses(parseConfigs("statuses"));
-    getAllProducts().catch(console.error);
   }, []);
 
-  const handlerSearch = async (value) => {
-    getAllProducts('name', value);
-  };
+  useEffect(() => {
+    getAllProducts('name', searchFilter).catch(console.error);
+  }, [searchFilter]);
+
+  useEffect(() => {
+    form.setFieldsValue(editProduct);
+  }, [form, editProduct]);
+
+  // const handlerSearch = async (value) => {
+  //   getAllProducts('name', value);
+  // };
 
   const handlerBeforeUpload = (file) => {
     const acceptedFileTypes = [
@@ -56,10 +65,6 @@ const Products = () => {
     return false; // return false to prevent auto upload
   }
 
-  const handlerGetFile = (fileList) => {
-    setFileList(fileList);
-  }
-
   const handlerFormSubmit = async (value) => {
     console.log(editProduct);
     try {
@@ -68,8 +73,8 @@ const Products = () => {
       } else {
         await axios.put('/api/products/' + editProduct._id, value);
       }
-      message.success(editProduct.name + " details saved successfully!")
-      getAllProducts();
+      message.success(value.name + " details saved successfully!")
+      getAllProducts('name', searchFilter);
       setPopModal(false);
     } catch {
       message.error(value.name + " already exists.");
@@ -101,12 +106,14 @@ const Products = () => {
   const handleToggle = async (record) => {
     try {
       let status = "inactive";
+      let d_status = 'disabled';
       if (record.status === 'inactive') {
         status = 'active';
+        d_status = 'enabled';
       };
       await axios.put('/api/products/' + record._id, { status: status });
-      message.success(record.name + " status was set to " + status + ".")
-      getAllProducts();
+      message.success(record.name + " has been " + d_status + " in the shop.");
+      getAllProducts('name', searchFilter);
       setPopModal(false);
     } catch {
       message.error(record.name + " status update failed.");
@@ -117,6 +124,7 @@ const Products = () => {
     {
       title: "Name",
       dataIndex: "name",
+      sorter: (prev, current) => prev.name.localeCompare(current.name)
     },
     {
       title: "Category",
@@ -177,11 +185,11 @@ const Products = () => {
         className="search-box"
         placeholder="product name"
         //onSearch={(value) => handlerSearch(value)}
-        onChange={(e) => handlerSearch(e.target.value)} />
+        onChange={(e) => { setSearchFilter(e.target.value) }} />
 
       <Button
         className="add-new"
-        onClick={() => { setPopModal(true); console.log(editProduct) }}>
+        onClick={() => { setEditProduct(false); form.resetFields(); setPopModal(true); console.log(editProduct) }}>
         Add New</Button>
 
       <Table
@@ -191,17 +199,16 @@ const Products = () => {
         loading={loading} />
 
       <Modal
-        title={`${editProduct !== null ? "Edit Product" : "Add New Product"}`}
+        title={`${editProduct !== false ? "Edit Product" : "Add New Product"}`}
         open={popModal}
         onCancel={() => {
-          setEditProduct(null);
           setPopModal(false);
         }}
         footer={false}>
         <Form
+          form={form}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 14 }}
-          initialValues={editProduct}
           onFinish={handlerFormSubmit}
           layout="horizontal">
           <Form.Item name="name" label="Name">
