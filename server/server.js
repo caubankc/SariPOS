@@ -46,11 +46,11 @@ app.use("/api/visits", (req, res) => {
 });
 
 // create port
-const PORT = 8000;
+console.log(process.env.MONGODB_URI);
+const PORT = process.env.PORT || 5000;
 const HOSTNAME = process.env.HOSTNAME || "localhost";
 
 // listen
 app.listen(PORT, HOSTNAME, () => {
     console.log(`Server running at http://${HOSTNAME}:${PORT}`)
 });
-
