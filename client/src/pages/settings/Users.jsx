@@ -1,4 +1,4 @@
-import { Button, Modal, Row, Table, Col, Input } from 'antd';
+import { Button, Modal, Row, Table, Col } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState, useRef } from 'react'
 import ReactToPrint from 'react-to-print';
@@ -8,14 +8,12 @@ import { useDispatch } from 'react-redux';
 import Layout from '../../components/Layout'
 import { getConfig } from '../../helpers/configHelper';
 
-const Orders = () => {
+const Users = () => {
     const componentRef = useRef();
     const dispatch = useDispatch();
     const [billsData, setBillsData] = useState([]);
     const [popModal, setPopModal] = useState(false);
     const [selectedBill, setSelectedBill] = useState(null);
-    const [searchFilter, setSearchFilter] = useState('');
-    const { Search } = Input;
 
     const getAllBills = async () => {
         try {
@@ -41,15 +39,16 @@ const Orders = () => {
         getAllBills();
     }, []);
 
+
+
     const columns = [
         {
-            title: "Receipt No.",
+            title: "Order ID",
             dataIndex: "orderId"
         },
         {
             title: "Customer Name",
             dataIndex: "customerName",
-            sorter: (prev, current) => prev.customerName.localeCompare(current.customerName)
         },
         {
             title: "Phone Number",
@@ -71,7 +70,6 @@ const Orders = () => {
         {
             title: "Total Amount",
             dataIndex: "totalAmount",
-            sorter: (prev, current) => prev.totalAmount - current.totalAmount
         },
         {
             title: "Action",
@@ -91,12 +89,6 @@ const Orders = () => {
     return (
         <Layout>
             <h2>All Invoice </h2>
-            <Search
-                className="search-box"
-                placeholder="receipt number"
-                //onSearch={(value) => handlerSearch(value)}
-                onChange={(e) => { setSearchFilter(e.target.value) }} />
-
             <Table dataSource={billsData} columns={columns} bordered />
 
             {
@@ -110,10 +102,6 @@ const Orders = () => {
                         </div>
                         <div className="cardBody">
                             <div className="group">
-                                <span>Receipt Number:</span>
-                                <span><b>{selectedBill.orderId}</b></span>
-                            </div>
-                            <div className="group">
                                 <span>Customer Name:</span>
                                 <span><b>{selectedBill.customerName}</b></span>
                             </div>
@@ -126,8 +114,8 @@ const Orders = () => {
                                 <span><b>{selectedBill.customerAddress}</b></span>
                             </div>
                             <div className="group">
-                                <span>Date:</span>
-                                <span><b>{selectedBill.createdAt.toString().substring(0, 19).replace("T", " ")}</b></span>
+                                <span>Date Order:</span>
+                                <span><b>{selectedBill.createdAt.toString().substring(0, 10)}</b></span>
                             </div>
                             <div className="group">
                                 <span>Total Sales:</span>
@@ -182,4 +170,4 @@ const Orders = () => {
     )
 }
 
-export default Orders
+export default Users

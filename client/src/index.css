@@ -31,12 +31,12 @@ body {
   border: 1px solid teal !important;
 }
 
-.primary-btn{
+.primary-btn {
   display: block !important;
   margin: 0 auto !important;
   background-color: #001e28 !important;
   color: #ffffff !important;
-  transition: all 0.2s!important;
+  transition: all 0.2s !important;
 }
 
 .primary-btn:hover {
@@ -45,26 +45,26 @@ body {
   border: 1px solid teal !important;
 }
 
-.secondary-btn{
+.secondary-btn {
   display: block !important;
   margin: 0 auto !important;
   background-color: white !important;
   color: #001e28 !important;
-  transition: all 0.2s!important;
+  transition: all 0.2s !important;
 }
 
-.secondary-btn:hover{
+.secondary-btn:hover {
   background-color: teal !important;
   color: white !important;
   border: 1px solid teal !important;
 }
 
-.danger-btn{
+.danger-btn {
   display: block !important;
   margin: 0 auto !important;
   background-color: white !important;
   color: #001e28 !important;
-  transition: all 0.2s!important;
+  transition: all 0.2s !important;
 }
 
 .danger-btn:hover {
@@ -183,6 +183,7 @@ body {
 }
 
 .search-box {
+  margin: 0 0 15px auto !important;
   width: 300px !important;
   float: left !important;
 }
@@ -216,10 +217,10 @@ body {
   margin: 0 30px;
   cursor: pointer;
   padding: 5px;
-  transition: all 0.2s!important;
+  transition: all 0.2s !important;
 }
 
-.categoryFlex h3{
+.categoryFlex h3 {
   text-transform: capitalize;
   letter-spacing: 1px;
   font-size: 12px;
@@ -232,7 +233,7 @@ body {
   color: white !important;
 }
 
-.categoryFlex:hover h3{
+.categoryFlex:hover h3 {
   color: white !important;
 }
 
@@ -241,7 +242,7 @@ body {
   background-color: #001e28;
   border-radius: 5px;
   color: white;
-  transition: all 0.2s!important;
+  transition: all 0.2s !important;
 }
 
 .category-active h3 {

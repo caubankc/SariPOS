@@ -13,6 +13,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
+    "localtunnel": "^2.0.2",
     "mongodb": "^4.11.0",
     "mongoose": "^6.7.2",
     "morgan": "^1.10.0",

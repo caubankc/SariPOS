@@ -7,6 +7,9 @@ import Cart from './pages/cart/Cart';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Orders from './pages/orders/Orders';
+import Categories from './pages/settings/Categories';
+import Users from './pages/settings/Users';
+import Shop from './pages/settings/Shop';
 
 function App() {
 
@@ -33,6 +36,9 @@ function App() {
           <Route path="/bills" element={<Home></Home>} />
           <Route path="/orders" element={<Orders></Orders>} />
           <Route path="/customers " element={<Home></Home>} />
+          <Route path="/categories" element={<Categories></Categories>} />
+          <Route path="/users" element={<Users></Users>} />
+          <Route path="/shop" element={<Shop></Shop>} />
         </Routes>
       </Router>
     </>
