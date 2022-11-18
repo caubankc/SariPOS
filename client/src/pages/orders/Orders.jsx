@@ -22,7 +22,11 @@ const Orders = () => {
             dispatch({
                 type: "SHOW_LOADING",
             });
-            const { data } = await axios.get('/api/orders/' + filter.key + '/' + filter.value);
+            let query = '/api/orders/';
+            if (filter.key && filter.value) {
+                query = '/api/orders/' + filter.key + '/' + filter.value;
+            }
+            const { data } = await axios.get(query);
             setBillsData(data);
             dispatch({
                 type: "HIDE_LOADING",
@@ -38,8 +42,14 @@ const Orders = () => {
     };
 
     useEffect(() => {
+        console.log(searchFilter);
         getAllBills(searchFilter);
     }, [searchFilter]);
+
+    const dateParser = (datestring) => {
+        let d = new Date(datestring.toString());
+        return d.toLocaleString('en-US', { timeZone: getConfig("timezone").logical }) + " " + getConfig("timezone").display;
+    }
 
     const columns = [
         {
@@ -60,24 +70,38 @@ const Orders = () => {
             title: "Purchase Time",
             dataIndex: "createdAt",
             render: (id, record) => {
-                let d = new Date(record.createdAt.toString());
                 return (
-                    <p>{d.toLocaleString('en-US', { timeZone: 'Asia/Manila' })}</p>
+                    <>{dateParser(record.createdAt)}</>
                 )
             },
         },
         {
             title: "Total Sales",
             dataIndex: "totalSales",
+            render: (id, record) => {
+                return (
+                    <>{record.totalSales.toFixed(2)}</>
+                )
+            }
         },
         {
             title: "Tax",
             dataIndex: "tax",
+            render: (id, record) => {
+                return (
+                    <>{record.tax.toFixed(2)}</>
+                )
+            }
         },
         {
             title: "Total Amount",
             dataIndex: "totalAmount",
-            sorter: (prev, current) => prev.totalAmount - current.totalAmount
+            sorter: (prev, current) => prev.totalAmount - current.totalAmount,
+            render: (id, record) => {
+                return (
+                    <>{record.totalAmount.toFixed(2)}</>
+                )
+            }
         },
         {
             title: "Action",
@@ -101,7 +125,7 @@ const Orders = () => {
                 className="search-box"
                 placeholder="receipt number"
                 //onSearch={(value) => handlerSearch(value)}
-                onChange={(e) => { setSearchFilter({ name: e.target.value }) }} />
+                onChange={(e) => { setSearchFilter({ key: 'orderId', value: e.target.value }) }} />
 
             <Table dataSource={billsData} columns={columns} bordered />
 
@@ -133,19 +157,19 @@ const Orders = () => {
                             </div>
                             <div className="group">
                                 <span>Date:</span>
-                                <span><b>{selectedBill.createdAt.toString().substring(0, 19).replace("T", " ")}</b></span>
+                                <span><b>{dateParser(selectedBill.createdAt)}</b></span>
                             </div>
                             <div className="group">
                                 <span>Total Sales:</span>
-                                <span><b>{getConfig("active_currency")} {selectedBill.totalSales}</b></span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.totalSales.toFixed(2)}</b></span>
                             </div>
                             <div className="group">
                                 <span>Tax:</span>
-                                <span><b>{getConfig("active_currency")} {selectedBill.tax}</b></span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.tax.toFixed(2)}</b></span>
                             </div>
                             <div className="group">
                                 <span>Total Amount:</span>
-                                <span><b>{getConfig("active_currency")} {selectedBill.totalAmount}</b></span>
+                                <span><b>{getConfig("active_currency")} {selectedBill.totalAmount.toFixed(2)}</b></span>
                             </div>
                         </div>
                         <div className="cardFooter">
@@ -171,7 +195,7 @@ const Orders = () => {
                             <div className="footerCardTotal">
                                 <div className="group">
                                     <h3>Total:</h3>
-                                    <h3> <b>{getConfig("active_currency")}{selectedBill.totalAmount}</b></h3>
+                                    <h3><b>{getConfig("active_currency")}{selectedBill.totalAmount.toFixed(2)}</b></h3>
                                 </div>
                             </div>
                             <div className="footerThanks">

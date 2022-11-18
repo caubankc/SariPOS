@@ -7,7 +7,7 @@ const fetch = async (req, res) => {
         switch (req.key) {
             case undefined:
             case null: break;
-            case "orderId": query = { orderId: req.value }; break;
+            case "orderId": query = { orderId: new RegExp(req.value, 'i') }; break;
             case "customerId": query = { customerId: new RegExp(req.value, 'i') }; break;
             default: query = { [req.key]: req.value }; break;
         }

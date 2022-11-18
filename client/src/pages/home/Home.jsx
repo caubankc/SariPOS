@@ -25,6 +25,10 @@ const Home = () => {
     getAllProducts();
   }, [dispatch]);
 
+  const delay = (time) => {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
   return (
     <AppLayout>
       <div className="category">
@@ -40,11 +44,15 @@ const Home = () => {
         </Row>
       </div>
       <Row>
-        {products.filter((i) => i.category === selectedCategory).map((product) => (
-          <Col xs={24} sm={24} md={12} lg={8} xl={6} xxl={4}>
-            <Product key={product.id} product={product} />
-          </Col>
-        ))}
+        {products.filter((i) => i.category === selectedCategory).map((product) => {
+          return (
+            <>
+              <Col xs={24} sm={24} md={12} lg={8} xl={6} xxl={4}>
+                <Product key={product.id} product={product} />
+              </Col>
+            </>
+          )
+        })}
       </Row>
     </AppLayout >
   )

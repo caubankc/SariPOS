@@ -4,6 +4,10 @@
     "shop_address": "Manila, Philippines",
     "tax": 12,
     "active_currency": "₱",
+    "timezone": {
+        "logical": "Asia/Manila",
+        "display": "PHT"
+    },
     "currencies": {
         "Philippine Peso": "₱"
     },
