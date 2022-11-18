@@ -14,15 +14,15 @@ const Orders = () => {
     const [billsData, setBillsData] = useState([]);
     const [popModal, setPopModal] = useState(false);
     const [selectedBill, setSelectedBill] = useState(null);
-    const [searchFilter, setSearchFilter] = useState('');
+    const [searchFilter, setSearchFilter] = useState({});
     const { Search } = Input;
 
-    const getAllBills = async () => {
+    const getAllBills = async (filter) => {
         try {
             dispatch({
                 type: "SHOW_LOADING",
             });
-            const { data } = await axios.get('/api/orders');
+            const { data } = await axios.get('/api/orders/' + filter.key + '/' + filter.value);
             setBillsData(data);
             dispatch({
                 type: "HIDE_LOADING",
@@ -38,8 +38,8 @@ const Orders = () => {
     };
 
     useEffect(() => {
-        getAllBills();
-    }, []);
+        getAllBills(searchFilter);
+    }, [searchFilter]);
 
     const columns = [
         {
@@ -57,8 +57,14 @@ const Orders = () => {
         }
         ,
         {
-            title: "Address",
-            dataIndex: "customerAddress",
+            title: "Purchase Time",
+            dataIndex: "createdAt",
+            render: (id, record) => {
+                let d = new Date(record.createdAt.toString());
+                return (
+                    <p>{d.toLocaleString('en-US', { timeZone: 'Asia/Manila' })}</p>
+                )
+            },
         },
         {
             title: "Total Sales",
@@ -95,7 +101,7 @@ const Orders = () => {
                 className="search-box"
                 placeholder="receipt number"
                 //onSearch={(value) => handlerSearch(value)}
-                onChange={(e) => { setSearchFilter(e.target.value) }} />
+                onChange={(e) => { setSearchFilter({ name: e.target.value }) }} />
 
             <Table dataSource={billsData} columns={columns} bordered />
 

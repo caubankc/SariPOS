@@ -22,9 +22,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
 // routes
-app.use("/api/products/:key?/:value?", (req, res) => {
+app.use("/api/products/:key?/:value?/:limit?", (req, res) => {
     req.value = req.params.value;
     req.key = req.params.key;
+    req.limit = req.params.limit;
     productRouter(req, res);
 });
 

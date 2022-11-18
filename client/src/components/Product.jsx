@@ -16,6 +16,7 @@ const Product = ({ product }) => {
 
     return (
         <Card
+            className="product-card"
             hoverable
             style={{ width: 240, marginBottom: 30 }}
             cover={

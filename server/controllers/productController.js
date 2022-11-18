@@ -8,6 +8,7 @@ const fetch = async (req, res) => {
             case null: break;
             case "id": query = { _id: req.value }; break;
             case "name": query = { name: new RegExp(req.value, 'i') }; break;
+            case "shop": query = { status: "active", category: req.value }; break;
             default: query = { [req.key]: req.value }; break;
         }
         result = await Product.find(query).sort({ _id: -1 });
