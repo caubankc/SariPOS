@@ -7,8 +7,10 @@ import { EyeOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import Layout from '../../components/Layout'
 import { getConfig } from '../../helpers/configHelper';
+import { render } from 'react-dom';
 
 const Orders = () => {
+
     const componentRef = useRef();
     const dispatch = useDispatch();
     const [billsData, setBillsData] = useState([]);
